@@ -40,7 +40,7 @@ public:
 
     i_smart_point<T>&operator=(const i_smart_point<T> &rhs)
     {
-        if(this->t!=(&rhs)->t)
+        if(this->re_count!=rhs.re_count)
         {
             if(--(this->re_count)==0)
             {
@@ -62,10 +62,7 @@ public:
             delete (t);
             delete (re_count);
             return;
-        } else
-        {
-          std::cout<< "仅仅将引用计数-1,没有销毁任何东西" <<std::endl;
-        }
+        } 
     }
 
     T &operator*()
