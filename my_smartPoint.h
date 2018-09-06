@@ -51,10 +51,6 @@ public:
             this->t = rhs.t;
             rhs.increment_re_count();
         }
-        else
-        {
-            std::cout<< "shit" <<std::endl;
-        }
 
         return *this;
     }
