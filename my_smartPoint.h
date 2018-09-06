@@ -5,10 +5,9 @@
 #ifndef TESTING_MY_SMARTPOINT_H
 #define TESTING_MY_SMARTPOINT_H
 
-#include <cassert>
+#include "assert.h"
 
-template<typename T>
-class i_shared_ptr
+template <typename T> class i_smart_point
 {
 private:
     int *re_count;
@@ -20,78 +19,65 @@ private:
     }
 
 public:
-    // 调试函数
     void use_count()
     {
-        std::cout << *re_count << std::endl;
+        std::cout<<*re_count<<std::endl;
     }
 
 public:
-
     // 默认构造
-    explicit i_shared_ptr(T *t_ = nullptr) : t{t_}
+    explicit i_smart_point(T *t_= nullptr):t{t_}
     {
-        if (t)
-        {
-            re_count = new int(1);
-        } else
-        {
-            re_count = new int(0);
-        }
+        re_count = new int(1);
     }
 
-
-    // 拷贝构造
-    i_shared_ptr(const i_shared_ptr<T> &rhs)
+    i_smart_point (const i_smart_point<T>& rhs)
     {
-        rhs.increment_re_count();
         re_count = rhs.re_count;
         t = rhs.t;
+        rhs.increment_re_count();
     }
 
-    i_shared_ptr &operator=(const i_shared_ptr<T> &rhs)
+    i_smart_point<T>&operator=(const i_smart_point<T> &rhs)
     {
-        assert(*re_count >= 0);
-        if (this != &rhs)
+        if(this->t!=(&rhs)->t)
         {
-            if (--*re_count <= 0)
+            if(--(this->re_count)==0)
             {
-                delete t;
-                delete re_count;
+                delete (re_count);
+                delete (t);
             }
-
+            this->re_count = rhs.re_count;
+            this->t = rhs.t;
             rhs.increment_re_count();
-            re_count = rhs.re_count;
-            t = rhs.t;
         }
+        else
+        {
+            std::cout<< "shit" <<std::endl;
+        }
+
         return *this;
     }
 
-    // 析构函数
-    ~i_shared_ptr()
+    ~i_smart_point()
     {
-        // t有效意味着*re_count不可能为0
-        if (t && --*re_count == 0)
+        if(--*re_count==0)
         {
-            delete t;
-            delete re_count;
-            std::cout << "执行了i_shared_ptr析构函数,且销毁了数据和引用计数" << std::endl;
-        } else if (!t)
-        {
-            std::cout << "执行了i_shared_ptr析构函数,由于t未指向数据,所以析构函数什么也不做" << std::endl;
+            delete (t);
+            delete (re_count);
+            return;
         } else
         {
-            std::cout << "执行了i_shared_ptr析构函数,仅仅将引用计数-1,但没有销毁任何东西,此时use_count= " << *re_count << std::endl;
+          std::cout<< "仅仅将引用计数-1,没有销毁任何东西" <<std::endl;
         }
-
     }
-
 
     T &operator*()
     {
         assert(t != nullptr);
         return *t;
     }
+
 };
 
 #endif //TESTING_MY_SMARTPOINT_H
