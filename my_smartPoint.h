@@ -42,7 +42,7 @@ public:
     {
         if(this->re_count!=rhs.re_count)
         {
-            if(--(this->re_count)==0)
+            if(--(*this->re_count)==0)
             {
                 delete (re_count);
                 delete (t);
